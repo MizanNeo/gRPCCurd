@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package departmaster;
+
+option csharp_namespace = "NeoSOFT.GRPCServices.Protos";
+
+service departMaster{
+// Get All
+rpc GellAll(GetAllRequest) returns (GellAllResponse){}
+// Get by ID
+rpc GetById(GetByIdRequest) returns (GetByIdResponse){}
+// Create 
+rpc Create(CreateRequest) returns(CreateResponse){}
+// Update
+rpc Update(UpdateRequest) returns (UpdateResponse){}
+//Delete
+rpc Delete(DeleteRequest) returns (DeleteResponse){}
+}
+
+
+//Get All request/response message settings
+message GetAllRequest{}
+message GellAllResponse{
+	repeated GetByIdResponse to_do=1;
+}
+//Get by ID request/response message settings
+message GetByIdRequest{
+	int32 Id=1;
+}
+message GetByIdResponse{
+	int32 Id=1;
+	string departName=2;
+	bool isActive=3;
+}
+// Create request/response message settings
+message CreateRequest{
+	string departName=2;
+	bool isActive=3;
+}
+message CreateResponse{
+	int32 Id=1;
+	
+}
+// Update request/response message settings
+message UpdateRequest{
+	int32 Id=1;
+	string departName=2;
+	bool isActive=3;
+}
+message UpdateResponse{
+	int32 Id=1;
+	string departName=2;
+	bool isActive=3;
+}
+//Delete request/response message settings
+message DeleteRequest{
+	int32 Id=1;
+}
+message DeleteResponse{
+	bool result=1;
+}

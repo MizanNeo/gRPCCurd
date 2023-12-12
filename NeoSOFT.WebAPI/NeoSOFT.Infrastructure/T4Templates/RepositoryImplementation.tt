@@ -1,0 +1,62 @@
+﻿<#@ template language="C#" hostspecific="false" debug="True" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="Microsoft.SqlServer.Smo" #>
+<#@ assembly name="Microsoft.SqlServer.ConnectionInfo" #>
+<#@ assembly name="Microsoft.SqlServer.Management.Sdk.Sfc" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="Microsoft.SqlServer.Management.Smo" #>
+<#
+    //**********************************************************************************************
+    // This T4 generates POCOs from the specified DB and saves them to the specified folder which 
+    // is relative to the template's location. One file per table/POCO.
+    //**********************************************************************************************
+    //****************************
+    // DEFINE YOUR VARIABLES HERE
+    //****************************
+// The SQL server name or IP
+   string sqlServer = "DESKTOP-DJP367F";
+    // The SQL username
+    string sqlLogin = "sa";
+    // The SQL password
+    string sqlPassword = "pass123!@#";
+    // The SQL database to generate the POCOs for
+    string sqlDatabase = "EmployeeManagement";
+    // The namespace to apply to the generated classes
+    string nmespace = "NeoSOFT.Infrastrcture.Repositories";
+    // The destination folder for the generated classes, relative to this file's location.
+    string destinationFolder = "Repositories";
+    // Loop over each table and create a class file!
+    Server server = new Server(sqlServer);
+    server.ConnectionContext.LoginSecure = false;
+    server.ConnectionContext.Login = sqlLogin;
+    server.ConnectionContext.Password = sqlPassword;
+    server.ConnectionContext.Connect();
+#>
+using NeoSOFT.Infrastructure.Context;
+using NeoSOFT.Infrastructure.Contracts;
+using NeoSOFT.Domain.Models;
+
+namespace <#= nmespace #>
+{    
+<#	foreach (Table table in server.Databases[sqlDatabase].Tables)
+    {
+        // Skip sys tables
+        if (table.Name.StartsWith("sys"))
+        {
+            continue;
+        }
+#>
+	public partial class <#= table.Name #>Repository : RepositoryBase<<#= table.Name #>>, I<#= table.Name #>Repository
+    {
+		public <#= table.Name #>Repository(EmployeeManagementContext repositoryContext) : base(repositoryContext)
+        {
+
+        }
+    }        
+<#} #>
+}

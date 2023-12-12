@@ -1,0 +1,71 @@
+﻿<#@ template language="C#" hostspecific="true" debug="True" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="Microsoft.SqlServer.Smo" #>
+<#@ assembly name="Microsoft.SqlServer.ConnectionInfo" #>
+<#@ assembly name="Microsoft.SqlServer.Management.Sdk.Sfc" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="Microsoft.SqlServer.Management.Smo" #>
+<#
+    //**********************************************************************************************
+    // This T4 generates POCOs from the specified DB and saves them to the specified folder which 
+    // is relative to the template's location. One file per table/POCO.
+    //**********************************************************************************************
+    //****************************
+    // DEFINE YOUR VARIABLES HERE
+    //****************************
+    // The SQL server name or IP
+    string sqlServer = "DESKTOP-DJP367F";
+    // The SQL username
+    string sqlLogin = "sa";
+    // The SQL password
+    string sqlPassword = "pass123!@#";
+    // The SQL database to generate the POCOs for
+    string sqlDatabase = "EmployeeManagement";
+    // The namespace to apply to the generated classes
+    string nmespace = "NeoSOFT.Infrastrcture.Contracts";
+    // The destination folder for the generated classes, relative to this file's location.
+    string destinationFolder = "Contracts";
+    // Loop over each table and create a class file!
+    Server server = new Server(sqlServer);
+    server.ConnectionContext.LoginSecure = false;
+    server.ConnectionContext.Login = sqlLogin;
+    server.ConnectionContext.Password = sqlPassword;
+    server.ConnectionContext.Connect();
+        
+#>
+namespace <#= nmespace #>
+{
+    public interface IRepository
+    {
+    <# foreach (Table table in server.Databases[sqlDatabase].Tables)
+    {
+    // Skip sys tables
+    if (table.Name.StartsWith("sys"))
+    {
+    continue;
+    } #>
+    I<#=  table.Name #>Repository <#= table.Name #>Repository { get; }
+    <# } #>
+}
+}      
+<#
+SaveOutput("IRepository.cs", destinationFolder);
+#>
+<#+
+    
+void SaveOutput(string outputFileName, string destinationFolder)
+{
+// Write to destination folder
+string templateDirectory = Path.Combine(Directory.GetParent(Host.TemplateFile).Parent.FullName, destinationFolder);
+string outputFilePath = Path.Combine(templateDirectory, outputFileName);
+File.Delete(outputFilePath);
+File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+// Flush generation
+this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+}
+#>

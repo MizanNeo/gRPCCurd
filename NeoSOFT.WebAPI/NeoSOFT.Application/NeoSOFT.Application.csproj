@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NeoSOFT.Common\NeoSOFT.Common.csproj" />
+    <ProjectReference Include="..\NeoSOFT.Domain\NeoSOFT.Domain.csproj" />
+    <ProjectReference Include="..\NeoSOFT.Infrastructure\NeoSOFT.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
