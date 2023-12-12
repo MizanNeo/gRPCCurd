@@ -1,6 +1,6 @@
 ## Steps to follow while creating webAPI with gRPC Services
 
-Technologies : .net core, Entityframework, gRPC Services
+Technologies : .net core, Entityframework, gRPC Services, MS SQL
 
 1) You have to create database in SQL if using sql database.
 2) Create database as per your requirements.
